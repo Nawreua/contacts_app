@@ -8,6 +8,5 @@ class User {
 
   String? name;
   String? surname;
-  int? age;
-  bool? favorite;
+  DateTime? birthDate;
 }

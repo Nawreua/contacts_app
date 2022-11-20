@@ -17,23 +17,18 @@ const UserSchema = CollectionSchema(
   name: r'User',
   id: -7838171048429979076,
   properties: {
-    r'age': PropertySchema(
+    r'birthDate': PropertySchema(
       id: 0,
-      name: r'age',
-      type: IsarType.long,
-    ),
-    r'favorite': PropertySchema(
-      id: 1,
-      name: r'favorite',
-      type: IsarType.bool,
+      name: r'birthDate',
+      type: IsarType.dateTime,
     ),
     r'name': PropertySchema(
-      id: 2,
+      id: 1,
       name: r'name',
       type: IsarType.string,
     ),
     r'surname': PropertySchema(
-      id: 3,
+      id: 2,
       name: r'surname',
       type: IsarType.string,
     )
@@ -79,10 +74,9 @@ void _userSerialize(
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
-  writer.writeLong(offsets[0], object.age);
-  writer.writeBool(offsets[1], object.favorite);
-  writer.writeString(offsets[2], object.name);
-  writer.writeString(offsets[3], object.surname);
+  writer.writeDateTime(offsets[0], object.birthDate);
+  writer.writeString(offsets[1], object.name);
+  writer.writeString(offsets[2], object.surname);
 }
 
 User _userDeserialize(
@@ -92,11 +86,10 @@ User _userDeserialize(
   Map<Type, List<int>> allOffsets,
 ) {
   final object = User();
-  object.age = reader.readLongOrNull(offsets[0]);
-  object.favorite = reader.readBoolOrNull(offsets[1]);
+  object.birthDate = reader.readDateTimeOrNull(offsets[0]);
   object.id = id;
-  object.name = reader.readStringOrNull(offsets[2]);
-  object.surname = reader.readStringOrNull(offsets[3]);
+  object.name = reader.readStringOrNull(offsets[1]);
+  object.surname = reader.readStringOrNull(offsets[2]);
   return object;
 }
 
@@ -108,12 +101,10 @@ P _userDeserializeProp<P>(
 ) {
   switch (propertyId) {
     case 0:
-      return (reader.readLongOrNull(offset)) as P;
+      return (reader.readDateTimeOrNull(offset)) as P;
     case 1:
-      return (reader.readBoolOrNull(offset)) as P;
-    case 2:
       return (reader.readStringOrNull(offset)) as P;
-    case 3:
+    case 2:
       return (reader.readStringOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -208,95 +199,71 @@ extension UserQueryWhere on QueryBuilder<User, User, QWhereClause> {
 }
 
 extension UserQueryFilter on QueryBuilder<User, User, QFilterCondition> {
-  QueryBuilder<User, User, QAfterFilterCondition> ageIsNull() {
+  QueryBuilder<User, User, QAfterFilterCondition> birthDateIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'age',
+        property: r'birthDate',
       ));
     });
   }
 
-  QueryBuilder<User, User, QAfterFilterCondition> ageIsNotNull() {
+  QueryBuilder<User, User, QAfterFilterCondition> birthDateIsNotNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'age',
+        property: r'birthDate',
       ));
     });
   }
 
-  QueryBuilder<User, User, QAfterFilterCondition> ageEqualTo(int? value) {
+  QueryBuilder<User, User, QAfterFilterCondition> birthDateEqualTo(
+      DateTime? value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'age',
+        property: r'birthDate',
         value: value,
       ));
     });
   }
 
-  QueryBuilder<User, User, QAfterFilterCondition> ageGreaterThan(
-    int? value, {
+  QueryBuilder<User, User, QAfterFilterCondition> birthDateGreaterThan(
+    DateTime? value, {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         include: include,
-        property: r'age',
+        property: r'birthDate',
         value: value,
       ));
     });
   }
 
-  QueryBuilder<User, User, QAfterFilterCondition> ageLessThan(
-    int? value, {
+  QueryBuilder<User, User, QAfterFilterCondition> birthDateLessThan(
+    DateTime? value, {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.lessThan(
         include: include,
-        property: r'age',
+        property: r'birthDate',
         value: value,
       ));
     });
   }
 
-  QueryBuilder<User, User, QAfterFilterCondition> ageBetween(
-    int? lower,
-    int? upper, {
+  QueryBuilder<User, User, QAfterFilterCondition> birthDateBetween(
+    DateTime? lower,
+    DateTime? upper, {
     bool includeLower = true,
     bool includeUpper = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.between(
-        property: r'age',
+        property: r'birthDate',
         lower: lower,
         includeLower: includeLower,
         upper: upper,
         includeUpper: includeUpper,
-      ));
-    });
-  }
-
-  QueryBuilder<User, User, QAfterFilterCondition> favoriteIsNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'favorite',
-      ));
-    });
-  }
-
-  QueryBuilder<User, User, QAfterFilterCondition> favoriteIsNotNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'favorite',
-      ));
-    });
-  }
-
-  QueryBuilder<User, User, QAfterFilterCondition> favoriteEqualTo(bool? value) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'favorite',
-        value: value,
       ));
     });
   }
@@ -647,27 +614,15 @@ extension UserQueryObject on QueryBuilder<User, User, QFilterCondition> {}
 extension UserQueryLinks on QueryBuilder<User, User, QFilterCondition> {}
 
 extension UserQuerySortBy on QueryBuilder<User, User, QSortBy> {
-  QueryBuilder<User, User, QAfterSortBy> sortByAge() {
+  QueryBuilder<User, User, QAfterSortBy> sortByBirthDate() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'age', Sort.asc);
+      return query.addSortBy(r'birthDate', Sort.asc);
     });
   }
 
-  QueryBuilder<User, User, QAfterSortBy> sortByAgeDesc() {
+  QueryBuilder<User, User, QAfterSortBy> sortByBirthDateDesc() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'age', Sort.desc);
-    });
-  }
-
-  QueryBuilder<User, User, QAfterSortBy> sortByFavorite() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'favorite', Sort.asc);
-    });
-  }
-
-  QueryBuilder<User, User, QAfterSortBy> sortByFavoriteDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'favorite', Sort.desc);
+      return query.addSortBy(r'birthDate', Sort.desc);
     });
   }
 
@@ -697,27 +652,15 @@ extension UserQuerySortBy on QueryBuilder<User, User, QSortBy> {
 }
 
 extension UserQuerySortThenBy on QueryBuilder<User, User, QSortThenBy> {
-  QueryBuilder<User, User, QAfterSortBy> thenByAge() {
+  QueryBuilder<User, User, QAfterSortBy> thenByBirthDate() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'age', Sort.asc);
+      return query.addSortBy(r'birthDate', Sort.asc);
     });
   }
 
-  QueryBuilder<User, User, QAfterSortBy> thenByAgeDesc() {
+  QueryBuilder<User, User, QAfterSortBy> thenByBirthDateDesc() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'age', Sort.desc);
-    });
-  }
-
-  QueryBuilder<User, User, QAfterSortBy> thenByFavorite() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'favorite', Sort.asc);
-    });
-  }
-
-  QueryBuilder<User, User, QAfterSortBy> thenByFavoriteDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'favorite', Sort.desc);
+      return query.addSortBy(r'birthDate', Sort.desc);
     });
   }
 
@@ -759,15 +702,9 @@ extension UserQuerySortThenBy on QueryBuilder<User, User, QSortThenBy> {
 }
 
 extension UserQueryWhereDistinct on QueryBuilder<User, User, QDistinct> {
-  QueryBuilder<User, User, QDistinct> distinctByAge() {
+  QueryBuilder<User, User, QDistinct> distinctByBirthDate() {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'age');
-    });
-  }
-
-  QueryBuilder<User, User, QDistinct> distinctByFavorite() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'favorite');
+      return query.addDistinctBy(r'birthDate');
     });
   }
 
@@ -793,15 +730,9 @@ extension UserQueryProperty on QueryBuilder<User, User, QQueryProperty> {
     });
   }
 
-  QueryBuilder<User, int?, QQueryOperations> ageProperty() {
+  QueryBuilder<User, DateTime?, QQueryOperations> birthDateProperty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'age');
-    });
-  }
-
-  QueryBuilder<User, bool?, QQueryOperations> favoriteProperty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'favorite');
+      return query.addPropertyName(r'birthDate');
     });
   }
 
