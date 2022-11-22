@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:isar/isar.dart';
-import 'package:get_it/get_it.dart';
 import 'package:styled_widget/styled_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:date_field/date_field.dart';
@@ -9,36 +7,30 @@ import 'package:contacts/model/user.dart';
 import 'package:contacts/provider/user_provider.dart';
 
 class InfoUserPage extends StatelessWidget {
-  InfoUserPage({super.key, required this.id}) {
-    init();
-  }
+  InfoUserPage({super.key, required this.user});
 
-  void init() async {
-    if (id != null) {
-      _user = await GetIt.instance<Isar>().users.get(id!) ?? User();
-    } else {
-      _user = User();
-    }
-  }
-
-  final Id? id;
+  final User? user;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  late final User _user;
 
   @override
   Widget build(BuildContext context) {
+    User user = this.user ?? User();
     return Scaffold(
       appBar: AppBar(
-        title: id == null ? const Text('New user') : const Text('Change user'),
+        title: this.user == null
+            ? const Text('New user')
+            : const Text('Change user'),
         actions: <Widget>[
           IconButton(
               onPressed: () {
                 if (_formKey.currentState?.validate() ?? false) {
                   // ajout ou modification de l'utilisateur
-                  if (id == null) {
-                    context.read<UserProvider>().addUser(_user);
-                    Navigator.of(context).pop();
+                  if (this.user == null) {
+                    context.read<UserProvider>().addUser(user);
+                  } else {
+                    context.read<UserProvider>().updateUser(user);
                   }
+                  Navigator.of(context).pop();
                 }
               },
               tooltip: 'Validate',
@@ -47,7 +39,7 @@ class InfoUserPage extends StatelessWidget {
       ),
       body: _InfoUserForm(
         formKey: _formKey,
-        user: _user,
+        user: user,
       ),
     );
   }
@@ -69,7 +61,11 @@ class _InfoUserState extends State<_InfoUserForm> {
   @override
   void initState() {
     super.initState();
+    if (widget.user.name != null) _controllerName.text = widget.user.name!;
     _controllerName.addListener(() => widget.user.name = _controllerName.text);
+    if (widget.user.surname != null) {
+      _controllerSurname.text = widget.user.surname!;
+    }
     _controllerSurname
         .addListener(() => widget.user.surname = _controllerSurname.text);
   }
@@ -89,7 +85,6 @@ class _InfoUserState extends State<_InfoUserForm> {
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
           TextFormField(
-            initialValue: widget.user.name,
             decoration: const InputDecoration(
               hintText: 'First Name',
               labelText: 'First Name',
@@ -103,7 +98,6 @@ class _InfoUserState extends State<_InfoUserForm> {
             controller: _controllerName,
           ),
           TextFormField(
-            initialValue: widget.user.surname,
             decoration: const InputDecoration(
               hintText: 'Last Name',
               labelText: 'Last Name',
@@ -111,7 +105,7 @@ class _InfoUserState extends State<_InfoUserForm> {
             controller: _controllerSurname,
           ),
           DateTimeFormField(
-            initialDate: widget.user.birthDate,
+            initialValue: widget.user.birthDate,
             use24hFormat: true,
             firstDate: DateTime.utc(1900, 1, 1),
             lastDate: DateTime.now(),

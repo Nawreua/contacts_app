@@ -28,6 +28,15 @@ class UserProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void updateUser(User user) async {
+    await GetIt.instance<Isar>().writeTxn(() async {
+      await GetIt.instance<Isar>().users.put(user);
+    });
+    _users[_users
+        .indexOf(_users.firstWhere((element) => element.id == user.id))] = user;
+    notifyListeners();
+  }
+
   void deleteUser(User user) async {
     await GetIt.instance<Isar>().writeTxn(() async {
       if (await GetIt.instance<Isar>().users.delete(user.id)) {
