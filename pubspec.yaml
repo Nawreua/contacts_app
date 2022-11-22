@@ -41,6 +41,7 @@ dependencies:
   isar_flutter_libs: ^3.0.5
   get_it: ^7.2.0
   styled_widget: ^0.4.1
+  date_field: ^3.0.2
 
 dev_dependencies:
   flutter_test:

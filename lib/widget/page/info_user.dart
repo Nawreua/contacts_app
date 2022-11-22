@@ -3,6 +3,7 @@ import 'package:isar/isar.dart';
 import 'package:get_it/get_it.dart';
 import 'package:styled_widget/styled_widget.dart';
 import 'package:provider/provider.dart';
+import 'package:date_field/date_field.dart';
 
 import 'package:contacts/model/user.dart';
 import 'package:contacts/provider/user_provider.dart';
@@ -109,12 +110,17 @@ class _InfoUserState extends State<_InfoUserForm> {
             ),
             controller: _controllerSurname,
           ),
-          InputDatePickerFormField(
+          DateTimeFormField(
             initialDate: widget.user.birthDate,
+            use24hFormat: true,
             firstDate: DateTime.utc(1900, 1, 1),
             lastDate: DateTime.now(),
-            fieldLabelText: 'Birthdate',
-            onDateSubmitted: (value) => widget.user.birthDate = value,
+            mode: DateTimeFieldPickerMode.date,
+            autovalidateMode: AutovalidateMode.always,
+            onDateSelected: (value) => widget.user.birthDate = value,
+            decoration: const InputDecoration(
+              labelText: 'Birthdate',
+            ),
           )
         ],
       ),
